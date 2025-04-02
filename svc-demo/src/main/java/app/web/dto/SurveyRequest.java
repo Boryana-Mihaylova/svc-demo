@@ -1,30 +1,28 @@
-package app.model.model;
+package app.web.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 import java.util.UUID;
 
 @Data
-@Builder
-public class SupportRequest {
-
-    @NotNull
-    private UUID id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class SurveyRequest {
 
     @NotNull
     private UUID userId;
 
     @NotBlank
-    private Subject subject;
+    private String subject;
 
     @NotBlank
-    private Support support;
+    private String support;
 
 
 }

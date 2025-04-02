@@ -3,17 +3,14 @@ package app.web;
 
 
 
-import app.model.model.Subject;
-import app.model.model.Support;
-
 import app.model.model.Survey;
 import app.model.service.SurveyService;
+import app.web.dto.SurveyRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,34 +24,25 @@ public class SurveyController {
     }
 
 
-
-
     @PostMapping
-    public ResponseEntity<Void> createSupportRequest(@RequestParam UUID userId,
-                                                     @RequestParam Subject subject,
-                                                     @RequestParam Support support) {
-        try {
-            // Извикване на услугата за създаване на нов SupportRequest
-            surveyService.createSupportRequest(userId, subject, support);
+    public ResponseEntity<Survey> submitSurvey(@RequestBody SurveyRequest surveyRequest) {
+        // Връща записаната анкета
+        Survey survey = surveyService.submitSurvey(surveyRequest);
 
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(survey);
+    }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    @GetMapping("/user-survey")
+    public ResponseEntity<Survey> getSurvey(@RequestParam(name = "userId") UUID userId) {
+
+        // Връща анкетата на конкретен потребител
+        Survey survey = surveyService.getSurvey(userId);
+
+        return ResponseEntity
+                .ok(survey);
     }
 
 
-    @GetMapping
-    public ResponseEntity<List<Survey>> getAllSupportRequests() {
-
-        List<Survey> supportRequests = surveyService.getAllSupportRequests();
-        if (supportRequests.isEmpty()) {
-
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-
-            return ResponseEntity.status(HttpStatus.OK).body(supportRequests);
-        }
-    }
 }
