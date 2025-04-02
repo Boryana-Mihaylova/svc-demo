@@ -22,11 +22,14 @@ public class Survey {
     private UUID id;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Subject subject;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Support support;
 
+    @Column(unique = true, nullable = false)
     private UUID userId;
 
 

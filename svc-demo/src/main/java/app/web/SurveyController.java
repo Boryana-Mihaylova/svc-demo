@@ -1,14 +1,19 @@
 package app.web;
 
-import app.model.model.SurveyPreference;
+
+
+
+import app.model.model.Subject;
+import app.model.model.Support;
+
+import app.model.model.Survey;
 import app.model.service.SurveyService;
-import app.web.dto.SurveyPreferenceResponse;
-import app.web.dto.UpsertSurveyPreference;
-import app.web.mapper.DtoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,29 +27,34 @@ public class SurveyController {
     }
 
 
-    @PostMapping("/user-support")
-    public ResponseEntity<SurveyPreferenceResponse> submitSurveySupport(@RequestBody UpsertSurveyPreference upsertSurveyPreference) {
 
 
-        SurveyPreference surveyPreference = surveyService.upsertPreference(upsertSurveyPreference);
-        SurveyPreferenceResponse responseDto = DtoMapper.fromSurveyPreference(surveyPreference);
+    @PostMapping
+    public ResponseEntity<Void> createSupportRequest(@RequestParam UUID userId,
+                                                     @RequestParam Subject subject,
+                                                     @RequestParam Support support) {
+        try {
+            // Извикване на услугата за създаване на нов SupportRequest
+            surveyService.createSupportRequest(userId, subject, support);
 
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(responseDto);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 
-    @GetMapping("/user-support")
-    public ResponseEntity<SurveyPreferenceResponse> getSurveySupport(@RequestParam(name = "userId") UUID userId) {
+    @GetMapping
+    public ResponseEntity<List<Survey>> getAllSupportRequests() {
 
-        SurveyPreference surveyPreference = surveyService.getPreferenceByUserId(userId);
+        List<Survey> supportRequests = surveyService.getAllSupportRequests();
+        if (supportRequests.isEmpty()) {
 
-        SurveyPreferenceResponse responseDto = DtoMapper.fromSurveyPreference(surveyPreference);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
 
-    return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(responseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(supportRequests);
+        }
     }
 }
